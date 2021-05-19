@@ -45,9 +45,9 @@ const App = () => {
       <CssBaseline />
       <header className={classes.header}>
         <h1>
-          React/Formik & <span>Date</span>
+          Material-UI & <span>DatePicker</span>
         </h1>
-        <h2>A simple app</h2>
+        <h2>Timezone issue when selecting date</h2>
       </header>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Formik
@@ -60,6 +60,7 @@ const App = () => {
             errors,
             touched,
             isSubmitting,
+            setFieldValue,
             submitForm,
             resetForm,
             ...rest
@@ -85,6 +86,17 @@ const App = () => {
                       label="Date of Birth"
                       name="birthday"
                       format="dd/MM/yyyy"
+                      onChange={(value) => {
+                        // override bindings to prevent issue with timezone
+                        if (!value) return;
+                        let date;
+                        try {
+                          date = value.toISOString();
+                          setFieldValue('birthday', date);
+                        } catch (e) {
+                          setFieldValue('birthday', null);
+                        }
+                      }}
                     />
                   </div>
 
