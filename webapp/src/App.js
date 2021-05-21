@@ -40,6 +40,23 @@ const App = () => {
     }, 100);
   };
 
+  /**
+   * Convert a _local-time_ value to an ISO-8601 Date string.
+   *
+   * For instance: given 2020-05-13T03:59:50.000Z, if we're in UTC-4,
+   * return "2020-05-12".
+   *
+   * Why? Because material-ui selects dates in local time, not in UTC. If we
+   * were to run date.toISOString(), that would convert to UTC and then
+   * convert to String; but if we convert to UTC, that changes the date.
+   */
+  const jsDateToLocalISO8601DateString = (date) => {
+    const year = date.getFullYear();
+    const month = String(101 + date.getMonth()).substring(1);
+    const day = String(100 + date.getDate()).substring(1);
+    return [year, month, day].join('-');
+  };
+
   return (
     <Container maxWidth="md">
       <CssBaseline />
@@ -90,12 +107,9 @@ const App = () => {
                         // override bindings to prevent issue with timezone
                         if (!value) return;
                         let date;
-                        try {
-                          date = value.toISOString();
-                          setFieldValue('birthday', date);
-                        } catch (e) {
-                          setFieldValue('birthday', null);
-                        }
+                        date = jsDateToLocalISO8601DateString(value);
+                        console.log('date is', date);
+                        setFieldValue('birthday', date);
                       }}
                     />
                   </div>
